@@ -6,7 +6,7 @@
 
     <!-- List of cluster configurations where the benchmark should run-->
     <clusters>
-        <cluster size="1" />
+        <cluster size="${gemfire.cluster.size:1}" />
     </clusters>
 
     <!-- List of configurations of the services -->
@@ -17,6 +17,11 @@
                           cache-name="theCache"/>
             </setup>
         </config>
+        <config name="Hazelcast 3">
+            <setup plugin="hazelcast3">
+                <hazelcast xmlns="urn:radargun:plugins:hazelcast3:2.1" file="dist-sync.xml"/>
+            </setup>
+        </config>
     </configurations>
 
     <!-- Sequence of stages executed on the cluster -->
@@ -24,10 +29,17 @@
         <service-start />
         <jvm-monitor-start />
 
+        <load-data num-entries="5000"/>
+
+        <basic-operations-test test-name="warmup" num-requests="100000" total-threads="10">
+            <key-selector>
+                <concurrent-keys total-entries="5000" />
+            </key-selector>
+        </basic-operations-test>
+
         <load-data num-entries="10000"/>
 
-        <basic-operations-test test-name="stress-test"
-                               duration="1m" total-threads="10">
+        <basic-operations-test test-name="stress-test" duration="10m" total-threads="10">
             <key-selector>
                 <concurrent-keys total-entries="10000"/>
             </key-selector>

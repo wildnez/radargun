@@ -5,7 +5,6 @@ import org.radargun.traits.BasicOperations;
 
 public class Gemfire8Operations implements BasicOperations {
 
-
     private Gemfire8Service service;
 
     public Gemfire8Operations(Gemfire8Service service) {

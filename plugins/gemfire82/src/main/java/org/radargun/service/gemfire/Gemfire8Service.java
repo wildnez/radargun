@@ -1,8 +1,6 @@
 package org.radargun.service.gemfire;
 
-import com.gemstone.gemfire.cache.Cache;
-import com.gemstone.gemfire.cache.CacheFactory;
-import com.gemstone.gemfire.cache.Region;
+import com.gemstone.gemfire.cache.*;
 import org.radargun.Service;
 import org.radargun.config.Property;
 import org.radargun.traits.Lifecycle;
@@ -16,6 +14,9 @@ public class Gemfire8Service implements Lifecycle {
 
     @Property(name = "cacheName", doc = "Name of the cache. Default is 'testCache'")
     protected String cacheName = "testCache";
+
+    @Property(name = "dataPolicy", doc = "Gemfire data policy. Default is 'PARTITION'")
+    protected DataPolicy dataPolicy = DataPolicy.PARTITION;
 
     @ProvidesTrait
     public Gemfire8Operations createBasicOperations () {
@@ -62,7 +63,10 @@ public class Gemfire8Service implements Lifecycle {
             return region;
         }
 
-        return cache.<K, V>createRegionFactory().create(actualName);
+        RegionFactory<K, V> regionFactory = cache.createRegionFactory();
+        regionFactory.setDataPolicy(dataPolicy);
+
+        return regionFactory.create(actualName);
     }
 
     @Override
