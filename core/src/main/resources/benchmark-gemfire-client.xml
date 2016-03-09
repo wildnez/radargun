@@ -1,0 +1,67 @@
+<!-- RadarGun 2.1 benchmark -->
+<benchmark xmlns="urn:radargun:benchmark:2.1">
+
+    <!-- Specifies where should the master open socket  -->
+    <master bindAddress="${master.address:127.0.0.1}" port="${master.port:2103}"/>
+
+    <!-- List of cluster configurations where the benchmark should run-->
+    <clusters>
+        <cluster>
+            <group name="server" size="${gemfire.servers:2}" />
+            <group name="client" size="${gemfire.clients:2}" />
+        </cluster>
+    </clusters>
+
+    <!-- List of configurations of the services -->
+    <configurations>
+        <config name="Gemfire 8.2 Client">
+            <setup group="server" plugin="gemfire82">
+                <server xmlns="urn:radargun:plugins:gemfire82:2.1" redundant-copies="1"/>
+            </setup>
+            <setup group="client" plugin="gemfire82">
+                <client xmlns="urn:radargun:plugins:gemfire82:2.1" locator-address="${locator.address}"/>
+            </setup>
+        </config>
+        <config name="Hazelcast 3.5.3 Client">
+            <setup group="server" plugin="hazelcast3">
+                <hazelcast xmlns="urn:radargun:plugins:hazelcast3:2.1" file="dist-sync.xml"/>
+            </setup>
+            <setup group="client" plugin="hazelcast3">
+                <client xmlns="urn:radargun:plugins:hazelcast3:2.1" addresses="127.0.0.1:5701"/>
+            </setup>
+        </config>
+    </configurations>
+
+
+    <!-- Sequence of stages executed on the cluster -->
+    <scenario >
+        <service-start groups="server"/>
+        <service-start groups="client"/>
+
+        <load-data groups="client,server" num-entries="5000"/>
+
+        <basic-operations-test groups="client" test-name="warmup" num-threads-per-node="10">
+            <key-selector>
+                <concurrent-keys total-entries="5000" />
+            </key-selector>
+        </basic-operations-test>
+
+        <load-data num-entries="50000"/>
+
+        <basic-operations-test groups="client" test-name="stress-test" duration="10m" num-threads-per-node="10">
+            <key-selector>
+                <concurrent-keys total-entries="50000" />
+            </key-selector>
+        </basic-operations-test>
+
+    </scenario>
+
+    <!-- How the statistics are reported -->
+    <reports>
+        <!-- Produce CSV statistics report -->
+        <reporter type="csv" />
+        <!-- Produce HTML statistics report -->
+        <reporter type="html" />
+    </reports>
+
+</benchmark>
