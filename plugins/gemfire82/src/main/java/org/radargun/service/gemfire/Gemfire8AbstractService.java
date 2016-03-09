@@ -1,43 +1,43 @@
 package org.radargun.service.gemfire;
 
-import com.gemstone.gemfire.cache.*;
-import org.radargun.Service;
+
+import com.gemstone.gemfire.cache.GemFireCache;
+import com.gemstone.gemfire.cache.Region;
 import org.radargun.config.Property;
+import org.radargun.traits.BasicOperations;
 import org.radargun.traits.Lifecycle;
 import org.radargun.traits.ProvidesTrait;
 
-@Service(doc = "Gemfire")
-public class Gemfire8Service implements Lifecycle {
+public abstract class Gemfire8AbstractService implements Lifecycle {
 
-    private Cache cache;
-    private boolean isRunning;
+    protected GemFireCache cache;
 
     @Property(name = "cacheName", doc = "Name of the cache. Default is 'testCache'")
     protected String cacheName = "testCache";
 
-    @Property(name = "dataPolicy", doc = "Gemfire data policy. Default is 'PARTITION'")
-    protected DataPolicy dataPolicy = DataPolicy.PARTITION;
-
-    @ProvidesTrait
-    public Gemfire8Operations createBasicOperations () {
-        return new Gemfire8Operations(this);
-    }
+    @Property(name = "locatorAddress", doc = "Locator address to discover server members")
+    protected String locatorAddress;
 
     // This method is crucial here, it exposes the Lifecycle trait,
     // without it the "start" method won't be invoked
     @ProvidesTrait
-    public Gemfire8Service getLifecycle() {
+    public Lifecycle getLifecycle() {
         return this;
     }
 
+    protected abstract  <K, V> Region<K, V> createRegion(String name);
+
     @Override
-    public void start() {
-        CacheFactory cacheFactory = new CacheFactory();
-        cache = cacheFactory.create();
-        isRunning = true;
+    public void stop() {
+        cache.close();
     }
 
-    public <K,V> Region<K, V> getOrCreateRegion(String name) {
+    @Override
+    public boolean isRunning() {
+        return cache != null && cache.getDistributedSystem().isConnected();
+    }
+
+    public <K, V> Region<K, V> getOrCreateRegion(String name) {
         /*
 
         There are two ways to specify the cache name used for tests.
@@ -63,20 +63,16 @@ public class Gemfire8Service implements Lifecycle {
             return region;
         }
 
-        RegionFactory<K, V> regionFactory = cache.createRegionFactory();
-        regionFactory.setDataPolicy(dataPolicy);
-
-        return regionFactory.create(actualName);
+        return createRegion(actualName);
     }
 
-    @Override
-    public void stop() {
-        isRunning = false;
-        cache.close();
-    }
+    public class Gemfire8Operations implements BasicOperations {
 
-    @Override
-    public boolean isRunning() {
-        return isRunning;
+        @Override
+        public <K, V> BasicOperations.Cache<K, V> getCache(String cacheName) {
+            Region<K, V> region = Gemfire8AbstractService.this.getOrCreateRegion(cacheName);
+            return new Gemfire8Cache<>(region);
+        }
+
     }
 }

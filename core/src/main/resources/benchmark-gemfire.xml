@@ -6,18 +6,15 @@
 
     <!-- List of cluster configurations where the benchmark should run-->
     <clusters>
-        <cluster size="${gemfire.cluster.size:1}" />
+        <cluster size="2">
+            <group name="server" size="1" />
+            <group name="client" size="1" />
+        </cluster>
     </clusters>
 
     <!-- List of configurations of the services -->
     <configurations>
-        <config name="GemFire">
-            <setup plugin="gemfire82">
-                <default xmlns="urn:radargun:plugins:gemfire82:2.1"
-                          cache-name="theCache"/>
-            </setup>
-        </config>
-        <config name="Hazelcast 3">
+        <config name="Hazelcast 3.5.3 Client">
             <setup plugin="hazelcast3">
                 <hazelcast xmlns="urn:radargun:plugins:hazelcast3:2.1" file="dist-sync.xml"/>
             </setup>
