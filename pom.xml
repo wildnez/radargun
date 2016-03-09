@@ -319,6 +319,21 @@
                <plugins.gemfire>gemfire82</plugins.gemfire>
            </properties>
        </profile>
+         <profile>
+            <id>redis</id>
+            <activation>
+               <property>
+                  <name>!no-redis</name>
+               </property>
+            </activation>
+            <modules>
+               <module>plugins/redis3</module>
+            </modules>
+            <properties>
+               <plugins.redis>redis3</plugins.redis>
+            </properties>
+         </profile>
+
    </profiles>
 
    <build>
@@ -480,7 +495,7 @@
                         </path>
 
                         <echo message="Packaging plugins: " />
-                        <ac:for list="${plugins.chm},${plugins.ehcache},${plugins.hazelcast},${plugins.jbosscache},${plugins.jgroups},${plugins.infinispan},${plugins.jdk18},${plugins.jdg},${plugins.coherence},${plugins.process},${plugins.spymemcached},${plugins.gemfire}" param="plugin" xmlns:ac="antlib:net.sf.antcontrib">
+                        <ac:for list="${plugins.chm},${plugins.ehcache},${plugins.hazelcast},${plugins.jbosscache},${plugins.jgroups},${plugins.infinispan},${plugins.jdk18},${plugins.jdg},${plugins.coherence},${plugins.process},${plugins.spymemcached},${plugins.gemfire},${plugins.redis}" param="plugin" xmlns:ac="antlib:net.sf.antcontrib">
                            <sequential>
                               <echo message="Packaging plugin @{plugin}..." />
                               <ac:if>
