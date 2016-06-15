@@ -1,20 +1,8 @@
 package org.radargun.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.MembershipEvent;
-import com.hazelcast.core.MembershipListener;
+import com.hazelcast.core.*;
 import org.radargun.Service;
 import org.radargun.config.Property;
 import org.radargun.logging.Log;
@@ -23,6 +11,10 @@ import org.radargun.traits.Clustered;
 import org.radargun.traits.Lifecycle;
 import org.radargun.traits.ProvidesTrait;
 import org.radargun.traits.Transactional;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  *
@@ -74,12 +66,12 @@ public class HazelcastService implements Lifecycle, Clustered {
          MembershipListener listener = new MembershipListener() {
             @Override
             public void memberAdded(MembershipEvent membershipEvent) {
-               updateMembers(membershipEvent.getMembers());
+               //updateMembers(membershipEvent.getMembers());
             }
 
             @Override
             public void memberRemoved(MembershipEvent membershipEvent) {
-               updateMembers(membershipEvent.getMembers());
+               //updateMembers(membershipEvent.getMembers());
             }
          };
          synchronized (this) {

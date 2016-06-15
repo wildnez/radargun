@@ -4,6 +4,7 @@
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+    <license-key>ENTERPRISE_HD#10Nodes#7NFIAmOKwafEjJk6rHVbTl5y1U0Su5100111011631100011199090100111</license-key>
     <group>
         <name>dev</name>
         <password>dev-pass</password>

@@ -44,6 +44,7 @@ public class Hazelcast3ClientService implements Lifecycle {
     @Override
     public void start() {
         ClientConfig config = new ClientConfig();
+        config.setLicenseKey("ENTERPRISE_HD#10Nodes#7NFIAmOKwafEjJk6rHVbTl5y1U0Su5100111011631100011199090100111");
 
         if (enableNearCache) {
             config.addNearCacheConfig(new NearCacheConfig(mapName));
