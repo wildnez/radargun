@@ -2,7 +2,7 @@ package org.radargun.service;
 
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.config.NearCacheConfig;
+import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.NearCacheStats;
@@ -13,23 +13,28 @@ import org.radargun.logging.LogFactory;
 import org.radargun.traits.Lifecycle;
 import org.radargun.traits.ProvidesTrait;
 
-import java.util.Set;
+import java.io.IOException;
 
 @Service(doc = "Hazelcast 3.7 Client")
 public class Hazelcast3ClientService implements Lifecycle {
 
     protected Log log = LogFactory.getLog(getClass());
 
-    @Property(name = "addresses", doc = "Addresses for the client to connect to")
-    private Set<String> addresses;
+//    @Property(name = "addresses", doc = "Addresses for the client to connect to")
+//    private Set<String> addresses;
+
+    @Property(name = "configPath", doc = "Full path for hazelcast-client.xml")
+    protected String configPath;
 
     @Property(name = "map", doc = "Name of the map")
     protected String mapName = "default";
 
-    @Property(name = "nearCache", doc = "Enable near cache")
-    protected boolean enableNearCache = false;
+//    @Property(name = "nearCache", doc = "Enable near cache")
+//    protected boolean enableNearCache = false;
 
     private HazelcastInstance hazelcastInstance;
+
+    private ClientConfig config;
 
     @ProvidesTrait
     public Hazelcast3ClientService getLifecycle() {
@@ -43,19 +48,26 @@ public class Hazelcast3ClientService implements Lifecycle {
 
     @Override
     public void start() {
-        ClientConfig config = new ClientConfig();
-        config.setLicenseKey("ENTERPRISE_HD#10Nodes#7NFIAmOKwafEjJk6rHVbTl5y1U0Su5100111011631100011199090100111");
+        try {
+            config = new XmlClientConfigBuilder(configPath).build();
 
-        if (enableNearCache) {
-            config.addNearCacheConfig(new NearCacheConfig(mapName));
-            config.getNetworkConfig().setSmartRouting(true);
+            //ClientConfig config = new ClientConfig();
+//            config.setLicenseKey("ENTERPRISE_HD#10Nodes#7NFIAmOKwafEjJk6rHVbTl5y1U0Su5100111011631100011199090100111");
+
+//            if (enableNearCache) {
+//                config.addNearCacheConfig(new NearCacheConfig(mapName));
+//                config.getNetworkConfig().setSmartRouting(true);
+//            }
+//
+//            for (String address : addresses) {
+//                config.getNetworkConfig().addAddress(address);
+//            }
+
+            hazelcastInstance = HazelcastClient.newHazelcastClient(config);
+
+        } catch (IOException e) {
+            log.error("hazelcast-client.xml not found", e);
         }
-
-        for (String address : addresses) {
-            config.getNetworkConfig().addAddress(address);
-        }
-
-        hazelcastInstance = HazelcastClient.newHazelcastClient(config);
     }
 
     @Override
@@ -65,7 +77,7 @@ public class Hazelcast3ClientService implements Lifecycle {
     }
 
     private void printNearCacheStats() {
-        if (!enableNearCache) {
+        if (config.getNearCacheConfig(mapName) == null) {
             return;
         }
 
