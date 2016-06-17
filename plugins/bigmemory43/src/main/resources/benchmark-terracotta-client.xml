@@ -1,0 +1,74 @@
+<!-- This test shows example comparison between three products -->
+<benchmark xmlns="urn:radargun:benchmark:2.1">
+    <master bindAddress="${master.address:127.0.0.1}" port="${master.port:2103}"/>
+
+    <clusters>
+        <cluster size="1"/>
+    </clusters>
+
+    <configurations>
+        <config name="Terracotta BigMemory 4.3">
+            <setup plugin="redis3">
+                <default xmlns="urn:radargun:plugins:bigmemory43:2.1" configPath=""/>
+            </setup>
+        </config>
+    </configurations>
+
+    <scenario>
+        <service-start/>
+        <jvm-monitor-start/>
+
+        <load-data num-entries="5000">
+            <value-generator>
+                <byte-array/>
+            </value-generator>
+            <key-generator>
+                <plugin-specific class="org.radargun.service.redis.Redis3ByteArrayKeyGenerator"/>
+            </key-generator>
+        </load-data>
+        <basic-operations-test test-name="warmup" num-requests="100000" num-threads-per-node="5">
+            <key-selector>
+                <concurrent-keys total-entries="5000"/>
+            </key-selector>
+
+            <value-generator>
+                <byte-array/>
+            </value-generator>
+            <key-generator>
+                <plugin-specific class="org.radargun.service.redis.Redis3ByteArrayKeyGenerator"/>
+            </key-generator>
+        </basic-operations-test>
+
+        <load-data num-entries="100000">
+            <value-generator>
+                <byte-array/>
+            </value-generator>
+            <key-generator>
+                <plugin-specific class="org.radargun.service.redis.Redis3ByteArrayKeyGenerator"/>
+            </key-generator>
+        </load-data>
+
+        <basic-operations-test get-ratio="1" put-ratio="9"  test-name="stress-test"
+                               duration="10m" num-threads-per-node="40">
+            <key-selector>
+                <gaussian-keys num-entries="100000"/>
+            </key-selector>
+
+            <value-generator>
+                <byte-array/>
+            </value-generator>
+            <key-generator>
+                <plugin-specific class="org.radargun.service.redis.Redis3ByteArrayKeyGenerator"/>
+            </key-generator>
+        </basic-operations-test>
+
+    </scenario>
+
+    <cleanup check-threads="false"/>
+
+    <reports>
+        <reporter type="csv"/>
+        <reporter type="html"/>
+    </reports>
+
+</benchmark>

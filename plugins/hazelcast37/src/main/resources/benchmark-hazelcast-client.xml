@@ -1,0 +1,53 @@
+<!-- This test shows example comparison between three products -->
+<benchmark xmlns="urn:radargun:benchmark:2.1">
+   <master bindAddress="${master.address:127.0.0.1}" port="${master.port:2103}"/>
+
+   <clusters>
+        <cluster>
+            <group name="server" size="${benchmark.servers:1}" />
+            <group name="client" size="${benchmark.clients:1}" />
+        </cluster>
+   </clusters>
+
+   <configurations>
+      <config name="Hazelcast 37">
+         <setup group="server" plugin="hazelcast37">
+            <hazelcast xmlns="urn:radargun:plugins:hazelcast3:2.1" file="dist-sync.xml"/>
+         </setup>
+         <setup group="client" plugin="hazelcast37">
+            <client xmlns="urn:radargun:plugins:hazelcast3:2.1" configPath="" near-cache="true" addresses="127.0.0.1:5701"/>
+         </setup>
+      </config>
+
+   </configurations>
+
+    <scenario >
+        <service-start groups="server"/>
+        <service-start groups="client"/>
+
+        <load-data groups="client, server" num-entries="5000"/>
+
+        <basic-operations-test groups="client" test-name="warmup" num-threads-per-node="10">
+            <key-selector>
+                <gaussian-keys num-entries="5000" />
+            </key-selector>
+        </basic-operations-test>
+
+        <load-data num-entries="100000"/>
+
+        <basic-operations-test groups="client" put-ratio="1" get-ratio="9" test-name="stress-test" duration="2m" num-threads-per-node="2">
+            <key-selector>
+                <gaussian-keys num-entries="100000" />
+            </key-selector>
+        </basic-operations-test>
+
+    </scenario>
+   <!-- Ignore leaked threads as Coherence leaks quite often -->
+   <cleanup check-threads="false" />
+
+   <reports>
+      <reporter type="csv" />
+      <reporter type="html" />
+   </reports>
+
+</benchmark>
