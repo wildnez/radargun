@@ -60,7 +60,6 @@ public class HazelcastService implements Lifecycle, Clustered {
 
     @Override
     public void start() {
-        log.info("Creating cache with the following configuration: " + config);
         try (InputStream configStream = getAsInputStreamFromClassLoader(config)) {
             Config cfg = new XmlConfigBuilder(configStream).build();
             hazelcastInstance = Hazelcast.newHazelcastInstance(cfg);

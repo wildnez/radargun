@@ -32,6 +32,7 @@
       <plugins.chm/>
       <plugins.ehcache/>
       <plugins.hazelcast/>
+      <plugins.bigmemory/>
       <plugins.jbosscache/>
       <plugins.jgroups/>
       <plugins.infinispan/>
@@ -162,6 +163,20 @@
          </modules>
          <properties>
             <plugins.hazelcast>hazelcast2,hazelcast3,hazelcast37</plugins.hazelcast>
+         </properties>
+      </profile>
+      <profile>
+         <id>bigmemory</id>
+         <activation>
+            <property>
+               <name>!no-bigmemory</name>
+            </property>
+         </activation>
+         <modules>
+            <module>plugins/bigmemory43</module>
+         </modules>
+         <properties>
+            <plugins.hazelcast>bigmemory43</plugins.hazelcast>
          </properties>
       </profile>
       <profile>
@@ -483,7 +498,7 @@
                         </path>
 
                         <echo message="Packaging plugins: " />
-                        <ac:for list="${plugins.chm},${plugins.ehcache},${plugins.hazelcast},${plugins.jbosscache},${plugins.jgroups},${plugins.infinispan},${plugins.jdk18},${plugins.jdg},${plugins.coherence},${plugins.process}" param="plugin" xmlns:ac="antlib:net.sf.antcontrib">
+                        <ac:for list="${plugins.chm},${plugins.ehcache},${plugins.hazelcast},${plugins.bigmemory},${plugins.jbosscache},${plugins.jgroups},${plugins.infinispan},${plugins.jdk18},${plugins.jdg},${plugins.coherence},${plugins.process}" param="plugin" xmlns:ac="antlib:net.sf.antcontrib">
                            <sequential>
                               <echo message="Packaging plugin @{plugin}..." />
                               <ac:if>

@@ -15,7 +15,7 @@
             <hazelcast xmlns="urn:radargun:plugins:hazelcast3:2.1" file="dist-sync.xml"/>
          </setup>
          <setup group="client" plugin="hazelcast37">
-            <client xmlns="urn:radargun:plugins:hazelcast3:2.1" configPath="" near-cache="true" addresses="127.0.0.1:5701"/>
+            <client xmlns="urn:radargun:plugins:hazelcast3:2.1" config-path="/Users/rahul/Hazelcast/RadarGun-2.1.0.Final/plugins/hazelcast37/resources/hazelcast-client.xml" addresses="127.0.0.1:5701"/>
          </setup>
       </config>
 

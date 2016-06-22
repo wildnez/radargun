@@ -9,7 +9,7 @@ public class BigMemory43Operations implements BasicOperations {
     private BigMemory43Service service;
 
     @Property(name = "cacheName", doc = "Name of the cache")
-    protected String cacheName = "default";
+    protected String cacheName = "defaultRadargunCache";
 
     public BigMemory43Operations(BigMemory43Service service) {
         this.service = service;
@@ -18,7 +18,7 @@ public class BigMemory43Operations implements BasicOperations {
     @Override
     public <K, V> Cache<K, V> getCache(String cacheName) {
         if(cacheName == null || cacheName.isEmpty()) {
-            this.cacheName = cacheName;
+            cacheName = this.cacheName;
         }
         return new BigMemoryCache(cacheName);
     }

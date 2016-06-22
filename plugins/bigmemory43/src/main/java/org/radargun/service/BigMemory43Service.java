@@ -9,8 +9,6 @@ import org.radargun.logging.LogFactory;
 import org.radargun.traits.Lifecycle;
 import org.radargun.traits.ProvidesTrait;
 
-import java.io.InputStream;
-
 @Service(doc = "Terracotta BigMemory 4.3 clustered service")
 public class BigMemory43Service implements Lifecycle {
 
@@ -20,6 +18,8 @@ public class BigMemory43Service implements Lifecycle {
     protected String configPath;
 
     private CacheManager cacheManager;
+
+    private boolean isServiceRunning;
 
     @ProvidesTrait
     public BigMemory43Operations getBasicOperations() {
@@ -40,8 +40,9 @@ public class BigMemory43Service implements Lifecycle {
             log.fatal("Can not proceed without client configurations (ehcache.xml)");
             return;
         }
-        InputStream configStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(configPath);
-        cacheManager = CacheManager.create(configStream);
+        cacheManager = CacheManager.create(configPath);
+        isServiceRunning = cacheManager.getCluster(ClusterScheme.TERRACOTTA).isClusterOnline();
+        log.info("Is Service Running after start(): "+isServiceRunning);
     }
 
     /**
@@ -50,6 +51,7 @@ public class BigMemory43Service implements Lifecycle {
     @Override
     public void stop() {
         cacheManager.shutdown();
+        isServiceRunning = false;
     }
 
     /**
@@ -57,7 +59,7 @@ public class BigMemory43Service implements Lifecycle {
      */
     @Override
     public boolean isRunning() {
-        return cacheManager.getCluster(ClusterScheme.TERRACOTTA).isClusterOnline();
+        return isServiceRunning;
     }
 
     public CacheManager getCacheManager() {

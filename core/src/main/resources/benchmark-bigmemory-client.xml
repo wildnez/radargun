@@ -8,8 +8,8 @@
 
     <configurations>
         <config name="Terracotta BigMemory 4.3">
-            <setup plugin="redis3">
-                <default xmlns="urn:radargun:plugins:bigmemory43:2.1" configPath=""/>
+            <setup plugin="bigmemory43">
+                <default xmlns="urn:radargun:plugins:bigmemory43:2.1" config-path="/Users/rahul/Hazelcast/RadarGun-2.1.0.Final/plugins/bigmemory43/resources/ehcache.xml"/>
             </setup>
         </config>
     </configurations>
@@ -19,14 +19,14 @@
         <jvm-monitor-start/>
 
         <load-data num-entries="5000">
-            <value-generator>
+<!--            <value-generator>
                 <byte-array/>
             </value-generator>
             <key-generator>
                 <plugin-specific class="org.radargun.service.redis.Redis3ByteArrayKeyGenerator"/>
-            </key-generator>
+            </key-generator> -->
         </load-data>
-        <basic-operations-test test-name="warmup" num-requests="100000" num-threads-per-node="5">
+<!--        <basic-operations-test test-name="warmup" num-requests="100000" num-threads-per-node="5">
             <key-selector>
                 <concurrent-keys total-entries="5000"/>
             </key-selector>
@@ -61,7 +61,7 @@
                 <plugin-specific class="org.radargun.service.redis.Redis3ByteArrayKeyGenerator"/>
             </key-generator>
         </basic-operations-test>
-
+-->
     </scenario>
 
     <cleanup check-threads="false"/>

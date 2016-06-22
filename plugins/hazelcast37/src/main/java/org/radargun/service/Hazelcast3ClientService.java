@@ -14,14 +14,15 @@ import org.radargun.traits.Lifecycle;
 import org.radargun.traits.ProvidesTrait;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Service(doc = "Hazelcast 3.7 Client")
 public class Hazelcast3ClientService implements Lifecycle {
 
     protected Log log = LogFactory.getLog(getClass());
 
-//    @Property(name = "addresses", doc = "Addresses for the client to connect to")
-//    private Set<String> addresses;
+    @Property(name = "addresses", doc = "Addresses for the client to connect to")
+    private Set<String> addresses;
 
     @Property(name = "configPath", doc = "Full path for hazelcast-client.xml")
     protected String configPath;
@@ -29,8 +30,8 @@ public class Hazelcast3ClientService implements Lifecycle {
     @Property(name = "map", doc = "Name of the map")
     protected String mapName = "default";
 
-//    @Property(name = "nearCache", doc = "Enable near cache")
-//    protected boolean enableNearCache = false;
+    @Property(name = "nearCache", doc = "Enable near cache")
+    protected boolean enableNearCache = false;
 
     private HazelcastInstance hazelcastInstance;
 
@@ -49,6 +50,7 @@ public class Hazelcast3ClientService implements Lifecycle {
     @Override
     public void start() {
         try {
+            log.info("Read from configPath: "+configPath);
             config = new XmlClientConfigBuilder(configPath).build();
 
             //ClientConfig config = new ClientConfig();
