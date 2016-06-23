@@ -19,12 +19,12 @@
         <jvm-monitor-start/>
 
         <load-data num-entries="5000">
-<!--            <value-generator>
+            <value-generator>
                 <byte-array/>
             </value-generator>
             <key-generator>
                 <plugin-specific class="org.radargun.service.redis.Redis3ByteArrayKeyGenerator"/>
-            </key-generator> -->
+            </key-generator>
         </load-data>
 <!--        <basic-operations-test test-name="warmup" num-requests="100000" num-threads-per-node="5">
             <key-selector>
