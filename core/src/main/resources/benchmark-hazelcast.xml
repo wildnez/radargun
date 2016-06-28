@@ -1,10 +1,10 @@
 <!-- This test shows example comparison between three products -->
 <benchmark xmlns="urn:radargun:benchmark:2.1">
-   <master bindAddress="${master.address:127.0.0.1}" port="${master.port:2103}"/>
+   <master bindAddress="${master.address:10.212.1.111}" port="${master.port:2103}"/>
 
    <clusters>
         <cluster>
-            <group name="server" size="${benchmark.servers:1}" />
+            <group name="server" size="${benchmark.servers:2}" />
             <group name="client" size="${benchmark.clients:1}" />
         </cluster>
    </clusters>
@@ -15,7 +15,7 @@
             <hazelcast xmlns="urn:radargun:plugins:hazelcast3:2.1" file="dist-sync.xml"/>
          </setup>
          <setup group="client" plugin="hazelcast37">
-            <client xmlns="urn:radargun:plugins:hazelcast3:2.1" config-path="/Users/rahul/Hazelcast/RadarGun-2.1.0.Final/plugins/hazelcast37/resources/hazelcast-client.xml" addresses="127.0.0.1:5701"/>
+            <client xmlns="urn:radargun:plugins:hazelcast3:2.1" config-path="/home/rahul/nfs/RadarGun-2.1.0.Final/plugins/hazelcast37/resources/hazelcast-client.xml" addresses="127.0.0.1:5701"/>
          </setup>
       </config>
 
@@ -25,7 +25,11 @@
         <service-start groups="server"/>
         <service-start groups="client"/>
 
-        <load-data groups="client, server" num-entries="5000"/>
+        <load-data groups="client, server" num-entries="5000">
+            <value-generator>
+                <byte-array/>
+            </value-generator>
+	</load-data>
 
         <basic-operations-test groups="client" test-name="warmup" num-threads-per-node="10">
             <key-selector>
@@ -33,9 +37,13 @@
             </key-selector>
         </basic-operations-test>
 
-        <load-data num-entries="100000"/>
+        <load-data num-entries="100000" entry-size="10000">
+            <value-generator>
+                <byte-array />
+            </value-generator>
+        </load-data>
 
-        <basic-operations-test groups="client" put-ratio="1" get-ratio="9" test-name="stress-test" duration="2m" num-threads-per-node="2">
+        <basic-operations-test groups="client" entry-size="10000" put-ratio="1" get-ratio="9" test-name="stress-test" duration="10m" num-threads-per-node="2">
             <key-selector>
                 <gaussian-keys num-entries="100000" />
             </key-selector>
