@@ -28,6 +28,9 @@ public class BigMemory43Operations implements BasicOperations {
         private net.sf.ehcache.Cache cache;
 
         BigMemoryCache(String cacheName) {
+            if(!service.getCacheManager().cacheExists(cacheName))
+                service.getCacheManager().addCache(cacheName);
+
             cache = service.getCacheManager().getCache(cacheName);
         }
 
